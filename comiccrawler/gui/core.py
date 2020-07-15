@@ -5,18 +5,20 @@ import subprocess # nosec
 import traceback
 import platform
 
+from .translate import lang
+
 # Translate state code to readible text.
 STATE = {
-	"INIT": "準備",
-	"ANALYZED": "解析完成",
-	"DOWNLOADING": "下載中",
-	"PAUSE": "停止",
-	"FINISHED": "完成",
-	"ERROR": "錯誤",
-	"INTERRUPT": "已刪除",
-	"UPDATE": "有更新",
-	"ANALYZING": "分析中",
-	"ANALYZE_INIT": "準備分析"
+	"INIT": lang["ready"],
+	"ANALYZED": lang["analyzed"],
+	"DOWNLOADING": lang["downloading"],
+	"PAUSE": lang["pause"],
+	"FINISHED": lang["finished"],
+	"ERROR": lang["error"],
+	"INTERRUPT": lang["interrupted"],
+	"UPDATE": lang["update"],
+	"ANALYZING": lang["analyzing"],
+	"ANALYZE_INIT": lang["ready_to_analyize"]
 }
 
 def safe_tk(text):

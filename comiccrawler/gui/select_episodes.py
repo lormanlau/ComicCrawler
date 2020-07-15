@@ -8,6 +8,8 @@ from belfrywidgets import ToolTip
 from .core import safe_tk
 from .dialog import Dialog
 
+from .translate import lang
+
 class SelectEpisodeDialog(Dialog):
 	def __init__(self, parent, title=None, mission=None, on_closed=None):
 		self.mission = mission
@@ -126,9 +128,9 @@ class SelectEpisodeDialog(Dialog):
 		xscrollbar.pack(fill="x")
 		
 	def create_buttons(self):
-		btn = ttk.Button(self.btn_bar, text="反相", command=self.toggle)
+		btn = ttk.Button(self.btn_bar, text=lang["reverse"], command=self.toggle)
 		btn.pack(side="left")
-		ToolTip(btn, "點擊任意項目後，Shift + 點擊另一項目，會對其間的項目反相")
+		ToolTip(btn, lang["reverse_tooltip"])
 		super().create_buttons()
 
 	def apply(self):
@@ -149,7 +151,7 @@ def select_episodes(parent, mission, on_closed=None):
 	"""Create dialog to select episodes."""
 	dialog = SelectEpisodeDialog(
 		parent,
-		title="選擇集數",
+		title=lang["selection_set"],
 		mission=mission,
 		on_closed=on_closed
 	)

@@ -30,6 +30,8 @@ from .dialog import Dialog
 from .core import get_scale, safe_tk, STATE
 from .select_episodes import select_episodes
 
+from .translate import lang
+
 def reselect_episodes(root, mission):
 	with load_episodes(mission):
 		if select_episodes(root, mission):
@@ -37,7 +39,7 @@ def reselect_episodes(root, mission):
 
 def draw_last_update(t):
 	if not t:
-		return "無"
+		return lang.no
 	return strftime("%Y/%m/%d", localtime(t))
 
 def create_mission_table(parent):
@@ -49,20 +51,20 @@ def create_mission_table(parent):
 			"width": 25
 		}, {
 			"id": "name",
-			"text": "任務"
+			"text": lang["task"]
 		}, {
 			"id": "host",
-			"text": "主機",
+			"text": lang["host"],
 			"width": 50,
 			"anchor": "center"
 		}, {
 			"id": "state",
-			"text": "狀態",
+			"text": lang["status"],
 			"width": 70,
 			"anchor": "center"
 		}, {
 			"id": "last_update",
-			"text": "更新",
+			"text": lang["last_update"],
 			"width": 70,
 			"anchor": "center",
 			"sort": "DESC"
@@ -83,7 +85,7 @@ def select_title(parent, mission):
 		def apply(self):
 			return self.entry.get()
 			
-	new_title = _Dialog(parent, title="重命名").wait()
+	new_title = _Dialog(parent, title=lang["rename"]).wait()
 	if not new_title:
 		return
 	with edit_mission_id(mission):
@@ -155,7 +157,7 @@ class ViewMixin:
 		ttk.Style().configure("Treeview", rowheight=int(20 * scale))
 		
 		# url label
-		tk.Label(self.root,text="輸入連結︰").pack(anchor="w")
+		tk.Label(self.root,text=lang["enter_link"] + "︰").pack(anchor="w")
 
 		# url entry
 		entry_url = ttk.Entry(self.root)
@@ -171,23 +173,23 @@ class ViewMixin:
 
 		# download manager
 		frame = ttk.Frame(self.notebook)
-		self.notebook.add(frame, text="任務列表")
+		self.notebook.add(frame, text=lang["task_list"])
 		
 		# mission table
 		self.view_table = create_mission_table(frame)
 
 		# library
 		frame = ttk.Frame(self.notebook)
-		self.notebook.add(frame, text="圖書館")
+		self.notebook.add(frame, text=lang["library"])
 
 		# library buttons
 		btn_bar = ttk.Frame(frame)
 		btn_bar.pack()
 
-		self.btn_update = ttk.Button(btn_bar, text="檢查更新")
+		self.btn_update = ttk.Button(btn_bar, text=lang["check_for_updates"])
 		self.btn_update.pack(side="left")
 
-		self.btn_download_update = ttk.Button(btn_bar, text="下載更新")
+		self.btn_download_update = ttk.Button(btn_bar, text=lang["download_updates"])
 		self.btn_download_update.pack(side="left")
 
 		# library treeview scrollbar container
@@ -199,14 +201,14 @@ class ViewMixin:
 
 		# domain list
 		frame = ttk.Frame(self.notebook)
-		self.notebook.add(frame, text="支援的網域")
+		self.notebook.add(frame, text=lang["supported_domains"])
 		
 		table = Table(frame, columns = [{
 			"id": "host",
-			"text": "域名"
+			"text": lang["domain_name"]
 		}, {
 			"id": "mod",
-			"text": "模組",
+			"text": lang["module"],
 			"anchor": "center"
 		}], tv_opt={"show": "headings"})
 		
@@ -218,15 +220,15 @@ class ViewMixin:
 			
 		# batch analyzer
 		frame = ttk.Frame(self.notebook)
-		self.notebook.add(frame, text="批次加入")
+		self.notebook.add(frame, text=lang["batch_add"])
 		
 		btn_bar = ttk.Frame(frame)
 		btn_bar.pack()
 		
-		self.btn_batch_analyze = ttk.Button(btn_bar, text="開始分析")
+		self.btn_batch_analyze = ttk.Button(btn_bar, text=lang["start_analysis"])
 		self.btn_batch_analyze.pack(side="left")
 		
-		self.btn_batch_analyze_stop = ttk.Button(btn_bar, text="停止分析")
+		self.btn_batch_analyze_stop = ttk.Button(btn_bar, text=lang["stop_analysis"])
 		self.btn_batch_analyze_stop.pack(side="left")
 		
 		self.text_batch_analyze = create_scrollable_text(frame)
@@ -241,23 +243,23 @@ class ViewMixin:
 		buttonbox = ttk.Frame(self.root)
 		buttonbox.pack()
 
-		btnaddurl = ttk.Button(buttonbox, text="加入連結")
+		btnaddurl = ttk.Button(buttonbox, text=lang["add_link"])
 		btnaddurl.pack(side="left")
 		self.btn_addurl = btnaddurl
 
-		btnstart = ttk.Button(buttonbox, text="開始下載")
+		btnstart = ttk.Button(buttonbox, text=lang["start_download"])
 		btnstart.pack(side="left")
 		self.btn_start = btnstart
 
-		btnstop = ttk.Button(buttonbox, text="停止下載")
+		btnstop = ttk.Button(buttonbox, text=lang["stop_download"])
 		btnstop.pack(side="left")
 		self.btn_stop = btnstop
 
-		btnclean = ttk.Button(buttonbox, text="移除已完成")
+		btnclean = ttk.Button(buttonbox, text=lang["remove_compeleted"])
 		btnclean.pack(side="left")
 		self.btn_clean = btnclean
 
-		btnconfig = ttk.Button(buttonbox, text="重載設定檔")
+		btnconfig = ttk.Button(buttonbox, text=lang["reload_profile"])
 		btnconfig.pack(side="left")
 		self.btn_config = btnconfig
 	
@@ -305,7 +307,7 @@ class EventMixin:
 
 		def stopdownload():
 			download_manager.stop_download()
-			print("停止下載")
+			print(lang["stop_download"])
 		self.btn_stop["command"] = stopdownload
 
 		def cleanfinished():
@@ -314,13 +316,13 @@ class EventMixin:
 			if not missions:
 				return
 			mission_manager.remove("view", *missions)
-			print("移除 " + ", ".join(mission.title for mission in missions))
+			print(lang["remove"] + ", ".join(mission.title for mission in missions))
 		self.btn_clean["command"] = cleanfinished
 
 		def reloadconfig():
 			config.load()
 			load_config()
-			print("設定檔重載成功！")
+			print(lang["config_success"])
 		self.btn_config["command"] = reloadconfig
 
 		def create_menu_set(name, table):
@@ -335,28 +337,28 @@ class EventMixin:
 				return bind_menu_inner
 
 			# add commands...
-			@bind_menu("刪除")
+			@bind_menu(lang["delete"])
 			def _():
-				if self.messagebox("yesno", "Comic Crawler", "確定刪除？"):
+				if self.messagebox("yesno", "Comic Crawler", ):
 					self.remove(name, *table.selected())
 					
 			if name == "view":
-				@bind_menu("刪除（包括圖書館）")
+				@bind_menu(lang["delete_library"])
 				def _():
-					if self.messagebox("yesno", "Comic Crawler", "確定刪除？"):
+					if self.messagebox("yesno", "Comic Crawler", lang["confirm_delete"]):
 						selected = table.selected()
 						self.remove("view", *selected)
 						self.remove("library", *selected)
 
-			@bind_menu("移至頂部")
+			@bind_menu(lang["move_to_top"])
 			def _():
 				mission_manager.lift(name, *table.selected())
 
-			@bind_menu("移至底部")
+			@bind_menu(lang["move_to_bottom"])
 			def _():
 				mission_manager.drop(name, *table.selected())
 
-			@bind_menu("改名")
+			@bind_menu(lang["rename"])
 			def _():
 				selected = table.selected()
 				if not selected:
@@ -364,12 +366,12 @@ class EventMixin:
 				mission = selected[0]
 				select_title(self.root, mission)
 
-			@bind_menu("重新選擇集數")
+			@bind_menu(lang["reselect_chapters"])
 			def _():
 				for mission in table.selected():
 					reselect_episodes(self.root, mission)
 
-			@bind_menu("開啟資料夾")
+			@bind_menu(lang["open_folder"])
 			def start_explorer(event=None):
 				if event:
 					mission = table.identify_row(event.y)
@@ -388,21 +390,21 @@ class EventMixin:
 						os.makedirs(folder)
 					desktop.open(folder)
 
-			@bind_menu("開啟網頁")
+			@bind_menu(lang["open_webpage"])
 			def _():
 				for mission in table.selected():
 					webbrowser.open(mission.url)
 
 			if name == "view":
-				@bind_menu("加入圖書館")
+				@bind_menu(lang["add_library"])
 				def _():
 					missions = table.selected()
 					titles = [ m.title for m in missions ]
 					mission_manager.add("library", *missions)
-					print("已加入圖書館︰{}".format(", ".join(titles)))
+					print(lang["added_library"] + "︰{}".format(", ".join(titles)))
 					
 			if name == "library":
-				@bind_menu("檢查更新")
+				@bind_menu(lang["check_for_updates"])
 				def _():
 					missions = table.selected()
 					download_manager.start_check_update(missions)
@@ -439,7 +441,7 @@ class EventMixin:
 		def lib_download_update():
 			missions = mission_manager.get_all("library", lambda m: m.state == "UPDATE")
 			if not missions:
-				self.messagebox("error", "Comic Crawler", "沒有新更新的任務")
+				self.messagebox("error", "Comic Crawler", lang["no_new_library_updates"])
 				return
 			mission_manager.add("view", *missions)
 			download_manager.start_download()
@@ -469,7 +471,7 @@ class EventMixin:
 		# close window event
 		def beforequit():
 			if download_manager.is_downloading():
-				if not self.messagebox("okcancel", "Comic Crawler", "任務下載中，確定結束？"):
+				if not self.messagebox("okcancel", "Comic Crawler", lang["stop_download_confirm"]):
 					return
 					
 			# going to quit
@@ -569,7 +571,7 @@ class MainWindow(ViewMixin, EventMixin):
 			self.messagebox(
 				"error",
 				"Comic Crawler",
-				"讀取存檔失敗！\n{}".format(event.data)
+				lang["failed_to_read_archive"] + " \n{}".format(event.data)
 			)
 
 		@self.thread.listen("DOWNLOAD_INVALID")
@@ -598,7 +600,7 @@ class MainWindow(ViewMixin, EventMixin):
 		def _(event):
 			err = event.data
 			if err and not isinstance(err, worker.WorkerExit):
-				self.messagebox("error", "Comic Crawler", "批次加入失敗！{}".format(err))
+				self.messagebox("error", "Comic Crawler", lang["batch_add_failed"] + "{}".format(err))
 			self.text_batch_analyze.config(state="normal")
 			print("Batch analyze ended")
 			
@@ -613,7 +615,7 @@ class MainWindow(ViewMixin, EventMixin):
 		"""Wrap mission_manager.remove."""
 		for mission in missions:
 			if mission.state in ("DOWNLOADING", "ANALYZING"):
-				self.messagebox("error", "Comic Crawler", "刪除任務失敗！任務使用中")
+				self.messagebox("error", "Comic Crawler", lang["failed_to_delete_task"])
 		mission_manager.remove(pool_name, *missions)
 
 	def sp_callback(self, text):
@@ -645,7 +647,7 @@ class MainWindow(ViewMixin, EventMixin):
 					self.messagebox,
 					"error",
 					mission.module.name,
-					"解析錯誤！\n{}".format(err)
+					lang["parsing_error"] + "\n{}".format(err)
 				)
 			if not err and on_success:
 				on_success()
@@ -662,7 +664,7 @@ class MainWindow(ViewMixin, EventMixin):
 				if self.messagebox(
 					"yesno",
 					"Comic Crawler",
-					safe_tk(mission.title) + "\n\n任務已存在，要檢查更新嗎？",
+					safe_tk(mission.title) + "\n\n" + lang["existing_task_check_updates"],
 					default="yes"
 				):
 					mission.state = 'ANALYZE_INIT'
@@ -670,7 +672,7 @@ class MainWindow(ViewMixin, EventMixin):
 			elif conflict_action == "reselect_episodes":
 				reselect_episodes(self.root, mission)
 			else:
-				self.messagebox("error", "Comic Crawler", "任務已存在")
+				self.messagebox("error", "Comic Crawler", lang["existing_task"])
 				
 			return
 		try:
@@ -679,7 +681,7 @@ class MainWindow(ViewMixin, EventMixin):
 			self.messagebox(
 				"error",
 				"Comic Crawler",
-				"建立任務失敗！不支援的網址！"
+				lang["failed_to_build_task"]
 			)
 			return
 			

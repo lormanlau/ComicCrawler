@@ -5,6 +5,8 @@ from tkinter import ttk
 
 from .core import safe_tk
 
+from .translate import lang
+
 class Dialog:
 	def __init__(self, parent, title="Dialog", on_closed=None):
 		self.parent = parent
@@ -39,10 +41,10 @@ class Dialog:
 		
 	def create_buttons(self):
 		ttk.Button(
-			self.btn_bar, text="確定", command=self.resolve, default="active"
+			self.btn_bar, text=lang["okay"], command=self.resolve, default="active"
 		).pack(side="left")
 		ttk.Button(
-			self.btn_bar, text="取消", command=self.reject
+			self.btn_bar, text=lang["cancel"], command=self.reject
 		).pack(side="left")
 		
 	def resolve(self, _event=None):
